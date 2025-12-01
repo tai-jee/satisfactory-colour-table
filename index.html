@@ -1,125 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Satisfactory Colour Table</title>
-		<link rel="stylesheet" href="style.css" />
 
-		<link rel="preconnect" href="https://fonts.googleapis.com" />
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-		<link
-			href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
-			rel="stylesheet"
-		/>
-		<link
-			rel="stylesheet"
-			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-			integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
-			crossorigin="anonymous"
-			referrerpolicy="no-referrer"
-		/>
-	</head>
-	<body>
-		<div id="header">
-			<div class="sf-logo"></div>
-			<h1>Colour Table</h1>
-		</div>
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Satisfactory Colour Table</title>
+	<link rel="stylesheet" href="style.css" />
 
-		<h3 style="background-color: var(--ficsit-orange); color: white; padding: 30px;">
-			This table is currently being updated for 1.0.<br />Most colours should still
-			be accurate, but some new items haven't been added yet.
-		</h3>
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+	<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
+		rel="stylesheet" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+		integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+		crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
 
-		<main>
-			<section id="desc-search">
-				<p>
-					This table is a collection of colours you may want to use in your
-					Satisfactory builds, based on in-game items, resources, UI elements,
-					etc.
-				</p>
-				<p>
-					Click any colour to copy its hex code to your clipboard, and use CTRL
-					+ V to paste it into your Customiser.
-				</p>
-				<input
-					type="text"
-					id="search-input"
-					placeholder="Search..."
-					autocomplete="off"
-				/>
+<body>
+	<div id="header">
+		<div class="sf-logo"></div>
+		<h1>Colour Table</h1>
+	</div>
+
+	<h3 style="background-color: var(--ficsit-orange); color: white; padding: 30px;">
+		This project is currently being revisited, and so colours will likely go missing and/or change.
+	</h3>
+
+	<main>
+		<section id="desc-search">
+			<p>
+				This table is a collection of colours you may want to use in your
+				Satisfactory builds, based on in-game items, resources, UI elements,
+				etc.
+			</p>
+			<p>
+				Click any colour to copy its hex code to your clipboard, and use CTRL
+				+ V to paste it into your Customiser.
+			</p>
+			<input type="text" id="search-input" placeholder="Search..." autocomplete="off" />
+			<div id="search-options">
 				<div id="search-options">
-					<div id="search-options">
-						<div class="checkbox-container">
-							<span class="checkbox">
-								<span class="ficsit-checkmark"></span>
-							</span>
-							<label>Ammo</label>
-						</div>
+					<div class="checkbox-container">
+						<span class="checkbox">
+							<span class="ficsit-checkmark"></span>
+						</span>
+						<label>Ammo</label>
+					</div>
 
-						<div class="checkbox-container">
-							<span class="checkbox">
-								<span class="ficsit-checkmark"></span>
-							</span>
-							<label>Consumables</label>
-						</div>
+					<div class="checkbox-container">
+						<span class="checkbox">
+							<span class="ficsit-checkmark"></span>
+						</span>
+						<label>Consumables</label>
+					</div>
 
-						<div class="checkbox-container">
-							<span class="checkbox">
-								<span class="ficsit-checkmark"></span>
-							</span>
-							<label>Items</label>
-						</div>
+					<div class="checkbox-container">
+						<span class="checkbox">
+							<span class="ficsit-checkmark"></span>
+						</span>
+						<label>Items</label>
+					</div>
 
-						<div class="checkbox-container">
-							<span class="checkbox">
-								<span class="ficsit-checkmark"></span>
-							</span>
-							<label>Metals</label>
-						</div>
+					<div class="checkbox-container">
+						<span class="checkbox">
+							<span class="ficsit-checkmark"></span>
+						</span>
+						<label>Metals</label>
+					</div>
 
-						<div class="checkbox-container">
-							<span class="checkbox">
-								<span class="ficsit-checkmark"></span>
-							</span>
-							<label>Natural Resources</label>
-						</div>
+					<div class="checkbox-container">
+						<span class="checkbox">
+							<span class="ficsit-checkmark"></span>
+						</span>
+						<label>Natural Resources</label>
+					</div>
 
-						<div class="checkbox-container">
-							<span class="checkbox">
-								<span class="ficsit-checkmark"></span>
-							</span>
-							<label>Processed Resources</label>
-						</div>
+					<div class="checkbox-container">
+						<span class="checkbox">
+							<span class="ficsit-checkmark"></span>
+						</span>
+						<label>Processed Resources</label>
+					</div>
 
-						<div class="checkbox-container">
-							<span class="checkbox">
-								<span class="ficsit-checkmark"></span>
-							</span>
-							<label>Products</label>
-						</div>
+					<div class="checkbox-container">
+						<span class="checkbox">
+							<span class="ficsit-checkmark"></span>
+						</span>
+						<label>Products</label>
+					</div>
 
-						<div class="checkbox-container">
-							<span class="checkbox">
-								<span class="ficsit-checkmark"></span>
-							</span>
-							<label>Project Parts</label>
-						</div>
+					<div class="checkbox-container">
+						<span class="checkbox">
+							<span class="ficsit-checkmark"></span>
+						</span>
+						<label>Project Parts</label>
+					</div>
 
-						<div class="checkbox-container">
-							<span class="checkbox">
-								<span class="ficsit-checkmark"></span>
-							</span>
-							<label>Misc</label>
-						</div>
+					<div class="checkbox-container">
+						<span class="checkbox">
+							<span class="ficsit-checkmark"></span>
+						</span>
+						<label>Misc</label>
 					</div>
 				</div>
-			</section>
-			<section id="results-container">
-				<div id="results"></div>
-			</section>
-		</main>
+			</div>
+		</section>
+		<section id="results-container">
+			<div id="results"></div>
+		</section>
+	</main>
 
-		<script src="script.js"></script>
-	</body>
+	<script src="script.js" type="module"></script>
+</body>
+
 </html>
