@@ -56,6 +56,8 @@ function loadResults() {
 		}
 	});
 
+	let resultNotEmpty = false;
+
 	// add colours if any of their aliases match the contents of the search bar
 	// and their category matches the selected checkbox(es)
 	colours.forEach((colour) => {
@@ -73,6 +75,7 @@ function loadResults() {
 					: selectedCategories.includes(category);
 			})
 		) {
+			resultNotEmpty = true;
 			const colourItem = document.createElement("div");
 			colourItem.classList.add("colour-item");
 
@@ -99,12 +102,14 @@ function loadResults() {
 			});
 		}
 	});
+
+	if (!resultNotEmpty) {
+		const noResultsMessage = document.createElement("div")
+		noResultsMessage.innerHTML = "<h4>No colours were found.</h4><p>Check your spelling and filters.</p>";
+		results.appendChild(noResultsMessage);
+	}
 };
 
 loadResults();
 
-fetch("colours/colours.json")
-	.then((response) => response.json())
-	.then((data) => {
-		searchInput.placeholder = `Search ${data.colours.length} colours`;
-	});
+searchInput.placeholder = `Search ${colours.length} colours`;
