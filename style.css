@@ -113,7 +113,7 @@ input[type="text"]:focus {
 
 #results {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(380px, 25%));
+	grid-template-columns: repeat(auto-fill, minmax(360px, 25%));
 	width: 100%;
 }
 
