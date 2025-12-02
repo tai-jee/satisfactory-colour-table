@@ -23,7 +23,7 @@
 body {
 	font-family: "Open Sans", sans-serif;
 	font-size: 1.2rem;
-	margin: 120px auto;
+	margin: 60px auto;
     width: min(90%, 3000px);
 }
 
@@ -113,7 +113,7 @@ input[type="text"]:focus {
 
 #results {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(400px, 25%));
+	grid-template-columns: repeat(auto-fill, minmax(380px, 25%));
 	width: 100%;
 }
 
@@ -183,8 +183,13 @@ input[type="text"]:focus {
 
 .colour-cell {
 	box-sizing: content-box;
-	min-width: 40px;
+	min-width: 15px;
 	height: 60px;
+	transition: 0.2s var(--bouncy-curve);
+}
+
+.colour-item:hover .colour-cell {
+	min-width: 40px;
 }
 
 .name-cell {
