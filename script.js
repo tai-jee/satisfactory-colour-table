@@ -1,115 +1,239 @@
-import { colours } from "./colours/colours.js";
+import { colours as coloursUnsorted } from "./colours/colours.js";
 
 const ficsitTickURL =
-	"https://satisfactory.wiki.gg/images/1/1d/FICSIT_Inc..png";
+  "https://satisfactory.wiki.gg/images/1/1d/FICSIT_Inc..png";
 
-const checkboxes = document.querySelectorAll(".checkbox-container");
+/**
+ * We definitely don't need to re-fetch SVGs for every element.
+ * We fetch is once and set it as global var. And we await so that
+ * when we build the categories list promise is fulfilled.
+ */
+let checkmarkSvg;
+await fetch("img/ficsit_checkmark.svg")
+  .then((response) => response.text())
+  .then((data) => {
+    checkmarkSvg = data;
+  });
+
+let sfLogoSvg;
+await fetch("img/sf_logo.svg")
+  .then((response) => response.text())
+  .then((data) => {
+    sfLogoSvg = data;
+  });
+
+document
+  .querySelectorAll(".sf-logo")
+  .forEach((element) => (element.innerHTML = sfLogoSvg));
+
+/**
+ * We don't want to sort colours list on every loadResults().
+ * Sorting once.
+ */
+const colours = coloursUnsorted.sort(compareByAlias);
+
 const searchInput = document.getElementById("search-input");
+const searchOptions = document.getElementById("search-options");
 
-const ficsitCheckmarks = document.querySelectorAll(".ficsit-checkmark");
-const sfLogos = document.querySelectorAll(".sf-logo");
+/**
+ * Instead of creating new div for no results each time
+ * we create it once and just toggle display mode.
+ */
+const noResultsMessage = document.createElement("div");
+noResultsMessage.id = "no-results-message";
+noResultsMessage.style.display = "none";
+noResultsMessage.innerHTML =
+  "<h4>No colours were found.</h4><p>Check your spelling and filters.</p>";
 
-checkboxes.forEach((checkbox) => {
-	checkbox.addEventListener("click", (e) => {
-		checkbox.getElementsByClassName("checkbox")[0].classList.toggle("checked");
-		loadResults();
-	});
+/**
+ * For further convenience we build a map from
+ * original list of the following structure:
+ * {
+ *     <category name>: [<color1>, <color2>, ...]
+ * }
+ *
+ * Once we did that - we will have significantly easier life
+ * with filtering the results and building categories list.
+ */
+let coloursByCategory = new Map();
+colours.forEach((colour) => {
+  colour.categories.forEach((category) => {
+    if (!coloursByCategory.has(category)) {
+      coloursByCategory.set(category, new Array());
+    }
+    coloursByCategory.set(
+      category,
+      coloursByCategory.get(category).concat(colour),
+    );
+  });
+});
+
+const categoriesListSorted = Array.from(coloursByCategory.keys()).sort();
+categoriesListSorted.forEach((category, index) => {
+  searchOptions.appendChild(buildCategorySelectorSection(category, index));
 });
 
 searchInput.addEventListener("input", (e) => {
-	loadResults();
+  loadResults();
 });
-
-ficsitCheckmarks.forEach((ficsitCheckmark) => {
-	fetch("img/ficsit_checkmark.svg")
-		.then((response) => response.text())
-		.then((data) => {
-			ficsitCheckmark.innerHTML = data;
-		});
-});
-
-sfLogos.forEach((sfLogo) => {
-	fetch("img/sf_logo.svg")
-		.then((response) => response.text())
-		.then((data) => {
-			sfLogo.innerHTML = data;
-		});
-});
-
-function loadResults() {
-	const results = document.getElementById("results");
-
-	results.innerHTML = "";
-
-	const colourNames = colours.sort((a, b) =>
-		a.aliases[0].localeCompare(b.aliases[0])
-	);
-
-	let selectedCategories = [];
-	checkboxes.forEach((checkbox) => {
-		if (
-			checkbox
-				.getElementsByClassName("checkbox")[0]
-				.classList.contains("checked")
-		) {
-			selectedCategories.push(checkbox.querySelector("label").innerText);
-		}
-	});
-
-	let resultNotEmpty = false;
-
-	// add colours if any of their aliases match the contents of the search bar
-	// and their category matches the selected checkbox(es)
-	colours.forEach((colour) => {
-		if (
-			colour.aliases.some((alias) => {
-				return searchInput.value === ""
-					? true
-					: alias.toLowerCase().includes(searchInput.value.toLowerCase());
-			}) &&
-			// add colours if at least one of their categories matches the selected checkbox(es)
-			// or if no checkboxes are selected
-			colour.categories.some((category) => {
-				return selectedCategories.length === 0
-					? true
-					: selectedCategories.includes(category);
-			})
-		) {
-			resultNotEmpty = true;
-			const colourItem = document.createElement("div");
-			colourItem.classList.add("colour-item");
-
-			const colourChip = colourItem.appendChild(
-				document.createElement("div")
-			);
-			colourChip.classList.add("colour-cell");
-			colourChip.style.backgroundColor = "#" + colour.colour;
-
-			const colourName = colourItem.appendChild(
-				document.createElement("div")
-			);
-			colourName.classList.add("name-cell");
-			colourName.innerHTML = `<span class="colour-name">${colour.aliases[0]}</span><span class="colour-code">#${colour.colour}</span>`;
-
-			results.appendChild(colourItem);
-
-			colourItem.addEventListener("click", () => {
-				navigator.clipboard.writeText(`#${colour.colour}`);
-				colourName.innerText = "Copied!";
-				setTimeout(() => {
-					colourName.innerHTML = `<span class="colour-name">${colour.aliases[0]}</span><span class="colour-code">#${colour.colour}</span>`;
-				}, 1000);
-			});
-		}
-	});
-
-	if (!resultNotEmpty) {
-		const noResultsMessage = document.createElement("div")
-		noResultsMessage.innerHTML = "<h4>No colours were found.</h4><p>Check your spelling and filters.</p>";
-		results.appendChild(noResultsMessage);
-	}
-};
 
 loadResults();
 
-searchInput.placeholder = `Search ${colours.length} colours`;
+/**
+ * Functions
+ */
+
+/**
+ * Building element of this original design and structure with added unique id:
+ * 	<div class="checkbox-container">
+ * 		<span class="checkbox">
+ * 			<span class="ficsit-checkmark"></span>
+ * 		</span>
+ * 		<label>Alien Items</label>
+ * 	</div>
+ */
+function buildCategorySelectorSection(categoryName, idSuffix) {
+  const containerDiv = document.createElement("div");
+  containerDiv.classList.add("checkbox-container");
+  containerDiv.id = `checkbox-container-${idSuffix}`;
+
+  const checkboxSpan = document.createElement("span");
+  /**
+   *  Setting up unique ID for each checkbox so that we can
+   *  assign event listeners and in general get element directly
+   */
+  checkboxSpan.classList.add("checkbox");
+  /**
+   * Adding/removing (toggling) class "checked" from the classlist on click
+   */
+  checkboxSpan.addEventListener("click", (event) => {
+    document
+      .getElementById(`checkbox-container-${idSuffix}`)
+      .querySelector(".checkbox")
+      .classList.toggle("checked");
+    loadResults();
+  });
+
+  const checkmarkSpan = document.createElement("span");
+  checkmarkSpan.classList = ["ficsit-checkmark"];
+  checkmarkSpan.innerHTML = checkmarkSvg;
+
+  const label = document.createElement("label");
+  label.innerHTML = categoryName;
+
+  checkboxSpan.appendChild(checkmarkSpan);
+  containerDiv.appendChild(checkboxSpan);
+  containerDiv.appendChild(label);
+
+  return containerDiv;
+}
+
+/**
+ * Building element of this original design and structure with added unique id:
+ * <div class="colour-cell" style="background-color: rgb(180, 136, 101);"></div>
+ * <div class="name-cell">
+ * 	<span class="colour-name">Adaptive Control Unit</span>
+ * 	<span class="colour-code">#b48865</span>
+ * </div>
+ */
+function buildColorItem(colour) {
+  const colourItem = document.createElement("div");
+  colourItem.classList.add("colour-item");
+
+  const colourCell = document.createElement("div");
+  colourCell.classList.add("colour-cell");
+  colourCell.style.backgroundColor = `#${colour.colour}`;
+
+  const nameCell = document.createElement("div");
+  nameCell.classList.add("name-cell");
+
+  const colourName = document.createElement("span");
+  colourName.classList.add("colour-name");
+  colourName.innerHTML = `${colour.aliases[0]}`;
+
+  const colourCode = document.createElement("span");
+  colourCode.classList.add("colour-code");
+  colourCode.innerHTML = `#${colour.colour}`;
+
+  colourItem.appendChild(colourCell);
+  colourItem.appendChild(nameCell);
+  nameCell.appendChild(colourName);
+  nameCell.appendChild(colourCode);
+
+  colourItem.addEventListener("click", () => {
+    const originalContent = colourName.innerHTML;
+    navigator.clipboard.writeText(`#${colour.colour}`);
+    colourName.innerText = "Copied!";
+    setTimeout(() => {
+      colourName.innerHTML = originalContent;
+    }, 1000);
+  });
+
+  return colourItem;
+}
+
+function compareByAlias(a, b) {
+  return a.aliases[0].localeCompare(b.aliases[0]);
+}
+
+function loadResults() {
+  const results = document.getElementById("results");
+  results.innerHTML = "";
+  results.appendChild(noResultsMessage);
+
+  let selectedCategories = [];
+  for (const checkboxContainer of searchOptions.getElementsByClassName(
+    "checkbox-container",
+  )) {
+    if (
+      checkboxContainer.querySelector(".checkbox").classList.contains("checked")
+    ) {
+      selectedCategories.push(
+        checkboxContainer.querySelector("label").innerText,
+      );
+    }
+  }
+
+  /**
+   * The search logic is to search only through the selected categories.
+   * So, before doing the search we reduce the list of colours.
+   */
+  let searchableColours = new Array();
+  if (selectedCategories.length > 0) {
+    let coloursSet = new Set();
+    selectedCategories.forEach((category) => {
+      coloursByCategory.get(category).forEach((colour) => {
+        coloursSet.add(colour);
+      });
+    });
+    searchableColours = Array.from(coloursSet);
+  } else {
+    searchableColours = colours;
+  }
+
+  const searchString = searchInput.value;
+
+  let filteredResults = new Array();
+
+  if (searchString === "") {
+    filteredResults = searchableColours;
+    searchInput.placeholder = `Search ${filteredResults.length} colours`;
+  } else {
+    filteredResults = searchableColours.filter((colour) => {
+      return colour.aliases.some((alias) => {
+        return alias.toLowerCase().includes(searchString.toLowerCase());
+      });
+    });
+  }
+
+  filteredResults.sort(compareByAlias);
+
+  if (filteredResults.length > 0) {
+    noResultsMessage.style.display = "none";
+    filteredResults.forEach((colour) => {
+      results.appendChild(buildColorItem(colour));
+    });
+  } else {
+    noResultsMessage.style.display = "block";
+  }
+}

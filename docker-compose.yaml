@@ -1,0 +1,26 @@
+services:
+  proxy:
+    # Stupid Movistar screws up routing to resources behind CloudFlare.
+    # Because stupid LaLiga is scared of soccer streams pirating.
+    #
+    # Yes, Dockerhub is behind CloudFlare and just `image: nginx`
+    # fails on connection timeout.
+    #
+    # Those alternatively gifted LaLiga guys obviously don't 
+    # understand CDN and Dockerhub (in their view it's some nerdy 
+    # shit noone except bunch of square-headed guys uses).
+    #
+    # Well, since I don't fancy switching VPN only to pull nginx image
+    # - I pull it from AWS public ECR.
+    # https://gallery.ecr.aws/nginx/nginx
+    image: public.ecr.aws/nginx/nginx
+    volumes:
+      - type: bind
+        source: ./
+        # This is standard path for default nginx website.
+        # If you want different path - you will need to tailor
+        # and mount custom nginx config. 
+        target: /usr/share/nginx/html
+        read_only: true
+    ports:
+      - 80:80

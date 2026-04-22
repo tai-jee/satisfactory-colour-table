@@ -10,4 +10,14 @@ Feel free to submit an issue to suggest new colours.
 
 ##### Highly messy, very amateur-hour code. It works, so don't judge me <3
 
+##### Local development
 
+If you just open HTML file in browser - you've get CORS error. Simple AF fix to make it work w/o lowering browser security setting or pulling the whole NodeJS framework.
+
+I guess if you can write javascript - you should know docker exist and how to install it.
+
+```
+    docker-compose up
+```
+
+Open `http://localhost/` in browser.
